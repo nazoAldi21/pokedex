@@ -25,3 +25,14 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+#__next {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.pokemon-list {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
