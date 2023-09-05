@@ -3,16 +3,17 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { Pokemon } from "@/src/utils/constant";
 import { backgroundColors } from "@/src/utils/constant";
+import { MdFavorite, MdFavoriteBorder } from "react-icons/md";
 
 interface PokemonDetailProps {
-  pokemon: Pokemon;
+  pokemons: Pokemon[];
 }
 
 const PokemonDetail: React.FC<PokemonDetailProps> = () => {
   const router = useRouter();
   const { id } = router.query;
   const [pokemon, setPokemon] = useState<any>(null);
-  const [isFavorite, setIsFavorite] = useState<boolean>(false); // State untuk menandai apakah Pokémon sudah favorit
+  const [isFavorite, setIsFavorite] = useState(false); // State untuk menandai apakah Pokémon sudah favorit
 
   useEffect(() => {
     if (id) {
@@ -22,11 +23,11 @@ const PokemonDetail: React.FC<PokemonDetailProps> = () => {
   }, [id]);
 
   useEffect(() => {
-    // Mengecek apakah Pokémon sudah ada di daftar favorit saat komponen dimuat
+    // Mengambil data favorit dari local storage saat komponen dimuat
     const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
-    const isAlreadyFavorite = favorites.some((fav: any) => fav.id === id);
-    setIsFavorite(isAlreadyFavorite);
-  }, [id]);
+    const favoriteIds = favorites.map((fav: any) => fav.id);
+    setIsFavorite(favoriteIds);
+  }, []);
 
   const fetchPokemonDetail = async (pokemonId: string) => {
     try {
@@ -40,13 +41,15 @@ const PokemonDetail: React.FC<PokemonDetailProps> = () => {
     }
   };
 
-  const handleAddToFavorites = () => {
-    // Mengambil daftar favorit dari local storage
+  const handleAddToFavorites = (pokemon: any) => {
+    // Mengambil data favorit dari local storage
     const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
 
     if (isFavorite) {
       // Jika Pokémon sudah ada di daftar favorit, maka hapus dari daftar
-      const updatedFavorites = favorites.filter((fav: any) => fav.id !== id);
+      const updatedFavorites = favorites.filter(
+        (fav: any) => fav.id !== pokemon.id
+      );
       localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
       setIsFavorite(false);
     } else {
@@ -94,7 +97,19 @@ const PokemonDetail: React.FC<PokemonDetailProps> = () => {
                 data-aos-delay="300"
               />
             </div>
-            <button onClick={handleAddToFavorites}>Add to Favorites</button>
+            <button onClick={handleAddToFavorites}>
+              {isFavorite ? (
+                <span className="flex flex-row justify-center items-center gap-2">
+                  <MdFavorite className="text-red-500" />
+                  Delete From Favorite
+                </span>
+              ) : (
+                <span className="flex flex-row justify-center items-center gap-2">
+                  <MdFavoriteBorder className="text-red-500" />
+                  Add To Favorite
+                </span>
+              )}
+            </button>
           </div>
           <div className="w-6/12 flex flex-col gap-4">
             <div className="flex flex-col gap-4">
@@ -114,16 +129,21 @@ const PokemonDetail: React.FC<PokemonDetailProps> = () => {
                 </ul>
               </div>
               <div className="flex flex-col gap-2">
-              <strong>Stats</strong>
-              <ul className="grid grid-cols-3 gap-4">
-                {pokemon.stats.map((stat: any, index: number) => (
-                  <li key={index} className="flex flex-col gap-1">
-                    <span className="capitalize text-sm">{stat.stat.name}</span> 
-                    <span className="font-semibold bg-red-900 h-3" style={{ width: `${stat.base_stat}px` }}/>
-                  </li>
-                ))}
-              </ul>
-            </div>
+                <strong>Stats</strong>
+                <ul className="grid grid-cols-3 gap-4">
+                  {pokemon.stats.map((stat: any, index: number) => (
+                    <li key={index} className="flex flex-col gap-1">
+                      <span className="capitalize text-sm">
+                        {stat.stat.name}
+                      </span>
+                      <span
+                        className="font-semibold bg-red-900 h-3"
+                        style={{ width: `${stat.base_stat}px` }}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
         </div>
