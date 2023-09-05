@@ -8,7 +8,7 @@ const Layout: React.FC<Layout> = ({ children }) => {
   return (
     <>
         <Header />
-        <main className="flex flex-row">{children}</main>
+        {children}
     </>
   );
 };

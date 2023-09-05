@@ -6,10 +6,10 @@ const Header: React.FC = () => {
     <nav className="w-full flex flex-row items-center justify-center p-2">
       <ul className="w-9/12 flex flex-row justify-between">
         <li>
-          <Link href="./">Pokedex</Link>
+          <Link href="/">Pokedex</Link>
         </li>
         <li>
-            <Link href="./pokemon/favourites">
+            <Link href="/pokemon/favourites">
                 Favourites
             </Link>
         </li>

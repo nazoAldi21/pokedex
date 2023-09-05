@@ -11,7 +11,7 @@ interface PokemonListProps {
 const PokemonList: React.FC<PokemonListProps> = ({ pokemons }) => {
     
   return (
-    <div className="pokemon-list grid grid-cols-4 gap-6 mt-6">
+    <div className="pokemon-list grid grid-cols-5 gap-6 mt-6">
       {pokemons.map((pokemon) => (
         <PokemonCard
           key={pokemon.id}

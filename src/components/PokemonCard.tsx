@@ -1,32 +1,21 @@
 import React from "react";
 import { Pokemon } from "@/src/utils/constant";
 import Link from "next/link";
+import { backgroundColors } from "@/src/utils/constant";
 
 interface PokemonCardProps {
   pokemon: Pokemon;
 }
 
 const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon }) => {
-  const backgroundColors: { [key: string]: string } = {
-    bug: "#A8B820",
-    dragon: "#7038F8",
-    fairy: "#EE99AC",
-    fire: "#F08030",
-    ghost: "#705898",
-    ground: "#E0C068",
-    normal: "#A8A878",
-    psychic: "#F85888",
-    steel: "#B8B8D0",
-    dark: "#705848",
-    electric: "#F8D030",
-    fighting: "#C03028",
-    flying: "#A890F0",
-    grass: "#78C850",
-    ice: "#98D8D8",
-    poison: "#A040A0",
-    rock: "#B8A038",
-    water: "#6890F0",
+
+  // Menyimpan Pokémon ke dalam list favorite local storage
+  const handleAddToFavorites = () => {
+    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    favorites.push(pokemon);
+    localStorage.setItem('favorites', JSON.stringify(favorites));
   };
+
   return (
     <div className="pokemon-card flex flex-col justify-center items-start bg-neutral-900 rounded-xl">
       <Link href={`/pokemon/${pokemon.id}`} className="w-full">
@@ -52,7 +41,7 @@ const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon }) => {
             {pokemon.types.map((type, index) => (
               <span
                 key={index}
-                className="border-white rounded-full px-3 py-2 mr-2"
+                className="border-white rounded-full px-3 py-1.5 mr-2 text-sm"
                 style={{ backgroundColor: backgroundColors[type] }}
               >
                 {type}
@@ -61,6 +50,7 @@ const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon }) => {
           </p>
         </div>
       </Link>
+      <button onClick={handleAddToFavorites}>Add to Favorites</button>
     </div>
   );
 };

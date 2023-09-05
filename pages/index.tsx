@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react"
 import axios from "axios"
-import AOS from "aos"
-import "aos/dist/aos.css"
 import InfiniteScroll from "react-infinite-scroll-component"
 import { Pokemon } from "@/src/utils/constant"
 import PokemonList from "@/src/components/PokemonList"
@@ -14,6 +12,7 @@ const Home: React.FC = () => {
   const [nextPage, setNextPage] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Get data pokemon menggunakan axios
   const fetchPokemons = async (url: string) => {
     try {
       const response = await axios.get(url);
@@ -22,7 +21,7 @@ const Home: React.FC = () => {
       const newPokemons: Pokemon[] = data.results.map((pokemon: any) => ({
         id: parseInt(pokemon.url.split("/")[6]),
         name: pokemon.name,
-        image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${
+        image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${
           pokemon.url.split("/")[6]
         }.png`,
         types: [],
@@ -47,6 +46,7 @@ const Home: React.FC = () => {
     fetchPokemons(API_URL);
   }, []);
 
+  // Handle Item selanjutnya 
   const handleLoadMore = () => {
     if (nextPage) {
       fetchPokemons(nextPage);
