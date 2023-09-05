@@ -12,11 +12,20 @@ const PokemonDetail: React.FC<PokemonDetailProps> = () => {
   const router = useRouter();
   const { id } = router.query;
   const [pokemon, setPokemon] = useState<any>(null);
+  const [isFavorite, setIsFavorite] = useState<boolean>(false); // State untuk menandai apakah Pokémon sudah favorit
 
   useEffect(() => {
     if (id) {
-      fetchPokemonDetail(id);
+      const pokemonId = Array.isArray(id) ? id[0] : id;
+      fetchPokemonDetail(pokemonId.toString());
     }
+  }, [id]);
+
+  useEffect(() => {
+    // Mengecek apakah Pokémon sudah ada di daftar favorit saat komponen dimuat
+    const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+    const isAlreadyFavorite = favorites.some((fav: any) => fav.id === id);
+    setIsFavorite(isAlreadyFavorite);
   }, [id]);
 
   const fetchPokemonDetail = async (pokemonId: string) => {
@@ -32,17 +41,27 @@ const PokemonDetail: React.FC<PokemonDetailProps> = () => {
   };
 
   const handleAddToFavorites = () => {
-    // Simpan informasi Pokémon ke dalam local storage
+    // Mengambil daftar favorit dari local storage
     const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
-    favorites.push(pokemon);
-    localStorage.setItem("favorites", JSON.stringify(favorites));
+
+    if (isFavorite) {
+      // Jika Pokémon sudah ada di daftar favorit, maka hapus dari daftar
+      const updatedFavorites = favorites.filter((fav: any) => fav.id !== id);
+      localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+      setIsFavorite(false);
+    } else {
+      // Jika belum ada di daftar favorit, tambahkan ke daftar
+      favorites.push(pokemon);
+      localStorage.setItem("favorites", JSON.stringify(favorites));
+      setIsFavorite(true);
+    }
   };
 
   return (
-    <main className="w-full flex justify-center my-8">
+    <main className="w-full flex justify-center my-24">
       {pokemon ? (
         <div className="w-8/12 flex flex-row justify-center">
-          <div className="w-5/12 flex flex-col justify-start items-start bg-neutral-800 rounded p-4 h-[400px] mr-8">
+          <div className="w-6/12 flex flex-col justify-start items-start bg-neutral-800 rounded-xl p-4 h-[400px] mr-8">
             <div
               className="flex flex-row justify-center items-center mb-4"
               data-aos="zoom-in-dow"
@@ -51,7 +70,7 @@ const PokemonDetail: React.FC<PokemonDetailProps> = () => {
               <h2 className="text-3xl font-bold capitalize mr-4">
                 {pokemon.name}
               </h2>
-              <h1 className="text-2xl font-normal capitalize">Pokemon #{id}</h1>
+              <h1 className="text-2xl font-normal capitalize">#{id}</h1>
             </div>
             <p>
               {pokemon.types.map((type: any, index: number) => (
@@ -75,37 +94,37 @@ const PokemonDetail: React.FC<PokemonDetailProps> = () => {
                 data-aos-delay="300"
               />
             </div>
+            <button onClick={handleAddToFavorites}>Add to Favorites</button>
           </div>
-          <div className="w-7/12 flex flex-col w-">
-            <div>
-              <strong>Base Experience:</strong> {pokemon.base_experience}
-            </div>
-            <div>
-              <strong>Height:</strong> {pokemon.height / 10} m
-            </div>
-            <div>
-              <strong>Weight:</strong> {pokemon.weight / 10} kg
-            </div>
-            <div>
-              <strong>Abilities:</strong>
-              <ul>
-                {pokemon.abilities.map((ability: any, index: number) => (
-                  <li key={index}>{ability.ability.name}</li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <strong>Stats:</strong>
-              <ul>
+          <div className="w-6/12 flex flex-col gap-4">
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-2">
+                <strong>Basic</strong>
+                <ul className="flex flex-col gap-1">
+                  <li>Height {pokemon.height / 10} m</li>
+                  <li>Weight {pokemon.weight / 10} kg</li>
+                </ul>
+              </div>
+              <div className="flex flex-col gap-2">
+                <strong>Abilities</strong>
+                <ul>
+                  {pokemon.abilities.map((ability: any, index: number) => (
+                    <li key={index}>{ability.ability.name}</li>
+                  ))}
+                </ul>
+              </div>
+              <div className="flex flex-col gap-2">
+              <strong>Stats</strong>
+              <ul className="grid grid-cols-3 gap-4">
                 {pokemon.stats.map((stat: any, index: number) => (
-                  <li key={index}>
-                    {stat.stat.name}: {stat.base_stat}
+                  <li key={index} className="flex flex-col gap-1">
+                    <span className="capitalize text-sm">{stat.stat.name}</span> 
+                    <span className="font-semibold bg-red-900 h-3" style={{ width: `${stat.base_stat}px` }}/>
                   </li>
                 ))}
               </ul>
             </div>
-            <button onClick={handleAddToFavorites}>Add to Favorites</button>
-            <Link href="/pokemon/favourites">Go to Favorites</Link>
+            </div>
           </div>
         </div>
       ) : (

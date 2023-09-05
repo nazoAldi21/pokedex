@@ -72,8 +72,8 @@ const Home: React.FC = () => {
   );
 
   return (
-    <main className="w-full flex justify-center items-center">
-      <section className="w-12/12 flex flex-col my-16">
+    <main className="w-full flex justify-center items-center my-24">
+      <section className="w-9/12 flex flex-col">
         <PokemonFilter
           filterTypes={filterTypes}
           onFilterChange={handleFilterChange}

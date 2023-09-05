@@ -2,32 +2,31 @@ import React from "react";
 import { Pokemon } from "@/src/utils/constant";
 import Link from "next/link";
 import { backgroundColors } from "@/src/utils/constant";
+import { MdFavorite, MdFavoriteBorder } from "react-icons/md";
 
 interface PokemonCardProps {
   pokemon: Pokemon;
+  onAddToFavorites: any;
+  isFavorite: boolean;
 }
 
-const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon }) => {
-
-  // Menyimpan Pokémon ke dalam list favorite local storage
-  const handleAddToFavorites = () => {
-    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-    favorites.push(pokemon);
-    localStorage.setItem('favorites', JSON.stringify(favorites));
-  };
-
+const PokemonCard: React.FC<PokemonCardProps> = ({
+  pokemon,
+  onAddToFavorites,
+  isFavorite,
+}) => {
   return (
-    <div className="pokemon-card flex flex-col justify-center items-start bg-neutral-900 rounded-xl">
+    <div className="pokemon-card flex flex-col justify-center items-start bg-neutral-900 rounded-xl relative">
       <Link href={`/pokemon/${pokemon.id}`} className="w-full">
         <div
           className="w-full flex justify-center"
-          data-aos="fade-left"
+          data-aos="fade-up"
           data-aos-delay="400"
         >
           <img
             src={pokemon.image}
             alt={pokemon.name}
-            className="w-full h-[150px] object-contain"
+            className="w-full h-[120px] object-contain"
           />
         </div>
         <div
@@ -50,7 +49,18 @@ const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon }) => {
           </p>
         </div>
       </Link>
-      <button onClick={handleAddToFavorites}>Add to Favorites</button>
+      <button
+        onClick={() => onAddToFavorites(pokemon)}
+        className="absolute top-0 right-0 p-4 text-2xl"
+        data-aos="fade-left"
+        data-aos-delay="800"
+      >
+        {isFavorite ? (
+          <MdFavorite className="text-red-500" />
+        ) : (
+          <MdFavoriteBorder className="text-red-500" />
+        )}
+      </button>
     </div>
   );
 };

@@ -16,8 +16,9 @@ const PokemonFilter: React.FC<PokemonFilterProps> = ({ filterTypes, onFilterChan
   };
 
   return (
-    <div className="pokemon-filter flex justify-end">
-      <select value={selectedType} onChange={handleTypeChange} className="text-black rounded px-2 py-1" >
+    <div className="pokemon-filter flex justify-between">
+      <h1 className="text-2xl font-bold mb-6">Pokédex List</h1>
+      <select value={selectedType} onChange={handleTypeChange} className="text-black rounded px-2 py-1 h-[2rem]" >
         <option value="">All Types</option>
         {filterTypes.map((type) => (
           <option key={type} value={type}>
